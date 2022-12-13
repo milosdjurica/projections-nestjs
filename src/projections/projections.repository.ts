@@ -31,9 +31,12 @@ export class ProjectionsRepository {
     projectionFilterQuery: FilterQuery<Projection>,
     projection: Partial<Projection>,
   ): Promise<Projection> {
+    // by default returns old projection
+    // if want to return new add {new:true} after projection
     return this.projectionModel.findOneAndUpdate(
       projectionFilterQuery,
       projection,
+      { new: true },
     );
   }
 

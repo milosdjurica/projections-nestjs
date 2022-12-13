@@ -15,7 +15,11 @@ export class ProjectionsService {
     return this.projectionsRepository.findOne({ projectionId });
   }
 
-  async create(createProjectionDto: CreateProjectionDto): Promise<Projection> {
+  async create(
+    fileName: string,
+    createProjectionDto: CreateProjectionDto,
+  ): Promise<Projection> {
+    console.log(fileName)
     return this.projectionsRepository.create(createProjectionDto);
   }
 
