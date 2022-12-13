@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ProjectionsService } from '../services/projections.service';
 import { ProjectionsController } from './projections.controller';
-import { ProjectionsService } from './projections.service';
 
 describe('ProjectionsController', () => {
   let controller: ProjectionsController;
