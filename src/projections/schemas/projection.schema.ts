@@ -9,10 +9,10 @@ export class Projection {
   id?: string;
 
   @Prop()
-  firstName?: string;
+  lastName?: string;
 
   @Prop()
-  lastName?: string;
+  firstName?: string;
 
   @Prop()
   value?: number;

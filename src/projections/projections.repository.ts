@@ -40,9 +40,15 @@ export class ProjectionsRepository {
     );
   }
 
-  async remove(
+  async delete(
     projectionFilterQuery: FilterQuery<Projection>,
   ): Promise<Projection> {
     return this.projectionModel.findOneAndDelete(projectionFilterQuery);
+  }
+
+
+  async deleteMany(projectionFilterQuery: FilterQuery<Projection>): Promise<boolean>{
+    const deleteResult =  await this.projectionModel.deleteMany(projectionFilterQuery)
+    return deleteResult.deletedCount>=1
   }
 }

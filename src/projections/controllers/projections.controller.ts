@@ -11,12 +11,12 @@ import {
   UploadedFile,
   ParseFilePipe,
   FileTypeValidator,
+  Req,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateProjectionDto, UpdateProjectionDto } from '../dto';
 import { ProjectionsService } from '../services/projections.service';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
+import { headers } from '../utils/headers';
 
 @Controller('projections')
 export class ProjectionsController {
@@ -33,24 +33,9 @@ export class ProjectionsController {
   }
 
   @Post()
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './files',
-        filename: (req, file, callback) => {
-          const filename = file.originalname;
-          callback(null, filename);
-        },
-      }),
-      fileFilter : (req, file, callback) => {
-        if(file.originalname.split('.')[1] !== 'csv'){
-          return callback(null, false)
-        }
-        callback(null, true)
-      }
-    }),
-  )
-  create(
+  @UseInterceptors(FileInterceptor('file'))
+  async create(
+    @Req() req,
     @Body() createProjectionDto: CreateProjectionDto,
     @UploadedFile(
       new ParseFilePipe({
@@ -59,12 +44,29 @@ export class ProjectionsController {
     )
     file: Express.Multer.File,
   ) {
-    console.log(file);
+    let arrayOfProjections = req.file.buffer.toString().split('\n');
 
-    return this.projectionsService.create(
-      file.originalname,
-      createProjectionDto,
-    );
+    for (let i = 1; i < arrayOfProjections.length; i++) {
+      let data: any[] = arrayOfProjections[i].split(',');
+      data.pop();
+
+      // making a obj for a single projection
+      let createProjectionDto = {};
+      for (let j = 0; j < data.length; j++) {
+        createProjectionDto[headers[j]] = data[j];
+      }
+
+      createProjectionDto['pointsScored'] = 0;
+      createProjectionDto['granica'] = 0;
+
+      let createdProjection = await this.projectionsService.create(
+        createProjectionDto,
+      );
+
+      if (!createdProjection)
+        return 'There was an error, some projections were not added';
+    }
+    return `Succesfully created all projections!`;
   }
 
   @Patch(':projectionId')
@@ -76,7 +78,12 @@ export class ProjectionsController {
   }
 
   @Delete(':projectionId')
-  remove(@Param('projectionId', ParseIntPipe) projectionId: number) {
-    return this.projectionsService.remove(projectionId);
+  deleteById(@Param('projectionId', ParseIntPipe) projectionId: number) {
+    return this.projectionsService.deleteById(projectionId);
+  }
+
+  @Delete()
+  deleteMany() {
+    return this.projectionsService.deleteMany();
   }
 }

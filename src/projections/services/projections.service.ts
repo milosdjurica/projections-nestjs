@@ -15,11 +15,7 @@ export class ProjectionsService {
     return this.projectionsRepository.findOne({ projectionId });
   }
 
-  async create(
-    fileName: string,
-    createProjectionDto: CreateProjectionDto,
-  ): Promise<Projection> {
-    console.log(fileName)
+  async create(createProjectionDto: CreateProjectionDto): Promise<Projection> {
     return this.projectionsRepository.create(createProjectionDto);
   }
 
@@ -30,7 +26,11 @@ export class ProjectionsService {
     );
   }
 
-  remove(projectionId: number) {
-    return this.projectionsRepository.remove({ projectionId });
+  deleteById(projectionId: number) {
+    return this.projectionsRepository.delete({ projectionId });
+  }
+
+  deleteMany() {
+    return this.projectionsRepository.deleteMany({});
   }
 }
