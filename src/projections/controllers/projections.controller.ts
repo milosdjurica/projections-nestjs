@@ -2,21 +2,24 @@ import {
   Controller,
   Get,
   Post,
-  Body,
   Patch,
-  Param,
   Delete,
+  Req,
+  Body,
+  Param,
   ParseIntPipe,
   UseInterceptors,
   UploadedFile,
   ParseFilePipe,
   FileTypeValidator,
-  Req,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage, memoryStorage } from 'multer';
 import { CreateProjectionDto, UpdateProjectionDto } from '../dto';
+import { ChangeFileInterceptor } from '../interceptors/changefile.interceptor';
 import { ProjectionsService } from '../services/projections.service';
-import { headers } from '../utils/headers';
+import { editFileName, fileHelper } from '../interceptors/filehelper';
+import { request } from 'http';
 
 @Controller('projections')
 export class ProjectionsController {
@@ -33,10 +36,21 @@ export class ProjectionsController {
   }
 
   @Post()
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage:
+        // memoryStorage()._handleFile(),
+        diskStorage({
+          destination: './files',
+          filename: editFileName,
+        }),
+      fileFilter: fileHelper,
+    }),
+    ChangeFileInterceptor,
+  )
   async create(
-    @Req() req,
-    @Body() createProjectionDto: CreateProjectionDto,
+    @Req() request,
+    @Body() listOfProjections: CreateProjectionDto[],
     @UploadedFile(
       new ParseFilePipe({
         validators: [new FileTypeValidator({ fileType: 'text/csv' })],
@@ -44,25 +58,12 @@ export class ProjectionsController {
     )
     file: Express.Multer.File,
   ) {
-    let arrayOfProjections = req.file.buffer.toString().split('\n');
-
-    for (let i = 1; i < arrayOfProjections.length; i++) {
-      let data: any[] = arrayOfProjections[i].split(',');
-      data.pop();
-
-      // making a obj for a single projection
-      let createProjectionDto = {};
-      for (let j = 0; j < data.length; j++) {
-        createProjectionDto[headers[j]] = data[j];
-      }
-
-      createProjectionDto['pointsScored'] = 0;
-      createProjectionDto['granica'] = 0;
-
+    // console.log(request.body);
+    for (let singleProjection of listOfProjections) {
+      // console.log(singleProjection);
       let createdProjection = await this.projectionsService.create(
-        createProjectionDto,
+        singleProjection,
       );
-
       if (!createdProjection)
         return 'There was an error, some projections were not added';
     }

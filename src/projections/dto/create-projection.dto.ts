@@ -1,51 +1,108 @@
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsNumberString,
+  IsOptional,
+  IsString,
+} from 'class-validator';
+
 export class CreateProjectionDto {
-  id?: string;
+  @IsNotEmpty()
+  @IsNumberString()
+  id: string;
 
-  lastName?: string;
+  @IsNotEmpty()
+  @IsString()
+  lastName: string;
 
-  firstName?: string;
+  @IsNotEmpty()
+  @IsString()
+  firstName: string;
 
-  value?: number;
+  @IsNotEmpty()
+  @IsNumber()
+  value: number;
 
-  team?: string;
+  @IsNotEmpty()
+  @IsString()
+  team: string;
 
-  position?: string;
+  @IsNotEmpty()
+  @IsString()
+  position: string;
 
-  opponent?: string;
+  @IsNotEmpty()
+  @IsString()
+  opponent: string;
 
-  minutes?: number;
+  @IsNotEmpty()
+  @IsNumber()
+  minutes: number;
 
-  points?: number;
+  @IsNotEmpty()
+  @IsNumber()
+  points: number;
 
-  threes?: number;
+  @IsNotEmpty()
+  @IsNumber()
+  threes: number;
 
-  rebounds?: number;
+  @IsNotEmpty()
+  @IsNumber()
+  rebounds: number;
 
-  assists?: number;
+  @IsNotEmpty()
+  @IsNumber()
+  assists: number;
 
-  steals?: number;
+  @IsNotEmpty()
+  @IsNumber()
+  steals: number;
 
-  blocks?: number;
+  @IsNotEmpty()
+  @IsNumber()
+  blocks: number;
 
-  turnovers?: number;
+  @IsNotEmpty()
+  @IsNumber()
+  turnovers: number;
 
-  twos?: number;
+  @IsNotEmpty()
+  @IsNumber()
+  twos: number;
 
-  freeThrows?: number;
+  @IsNumber()
+  @IsNotEmpty()
+  freeThrows: number;
 
-  freeThrowsMissed?: number;
+  @IsNotEmpty()
+  @IsNumber()
+  freeThrowsMissed: number;
 
-  fieldGoals?: number;
+  @IsNotEmpty()
+  @IsNumber()
+  fieldGoals: number;
 
-  fieldGoalsMissed?: number;
+  @IsNotEmpty()
+  @IsNumber()
+  fieldGoalsMissed: number;
 
-  doubleDoubles?: number;
+  @IsNotEmpty()
+  @IsNumber()
+  doubleDoubles: number;
 
-  tripleDoubles?: number;
+  @IsNotEmpty()
+  @IsNumber()
+  tripleDoubles: number;
 
-  injury?: string;
+  @IsString()
+  injury: string;
 
+  @IsOptional()
+  @IsNumber()
   pointsScored?: number;
 
+  @IsOptional()
+  @IsNumber()
   granica?: number;
 }
