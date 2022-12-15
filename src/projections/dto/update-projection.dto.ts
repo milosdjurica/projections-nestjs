@@ -1,8 +1,16 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateProjectionDto } from './create-projection.dto';
+import { IsNumber, IsOptional, Max, Min } from 'class-validator';
 
 // export class UpdateProjectionDto extends PartialType(CreateProjectionDto) {}
 export class UpdateProjectionDto {
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Max(100)
   pointsScored?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Max(100)
   granica?: number;
 }

@@ -4,7 +4,6 @@ import {
   Post,
   Patch,
   Delete,
-  Req,
   Body,
   Param,
   ParseIntPipe,
@@ -15,11 +14,9 @@ import {
   ParseArrayPipe,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage, memoryStorage } from 'multer';
 import { CreateProjectionDto, UpdateProjectionDto } from '../dto';
 import { ChangeFileInterceptor } from '../interceptors/changefile.interceptor';
 import { ProjectionsService } from '../services/projections.service';
-import { editFileName, fileHelper } from '../interceptors/filehelper';
 
 @Controller('projections')
 export class ProjectionsController {
@@ -36,20 +33,8 @@ export class ProjectionsController {
   }
 
   @Post()
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage:
-        // memoryStorage()._handleFile(),
-        diskStorage({
-          destination: './files',
-          filename: editFileName,
-        }),
-      fileFilter: fileHelper,
-    }),
-    ChangeFileInterceptor,
-  )
+  @UseInterceptors(FileInterceptor('file'), ChangeFileInterceptor)
   async create(
-    @Req() request,
     @Body(new ParseArrayPipe({ items: CreateProjectionDto }))
     listOfProjections: CreateProjectionDto[],
     @UploadedFile(
@@ -59,19 +44,10 @@ export class ProjectionsController {
     )
     file: Express.Multer.File,
   ) {
-    for (let singleProjection of listOfProjections) {
-      request.body = singleProjection;
-      this.createSingleProjection(singleProjection);
-    }
-    return `Succesfully created all projections!`;
+    return this.projectionsService.create(listOfProjections);
   }
 
-  @Post('createSingleProjection')
-  createSingleProjection(@Body() createProjectionDto: CreateProjectionDto) {
-    return this.projectionsService.create(createProjectionDto);
-  }
-
-  @Patch(':projectionId')
+  @Patch('/:projectionId')
   update(
     @Param('projectionId', ParseIntPipe) projectionId: number,
     @Body() updateProjectionDto: UpdateProjectionDto,

@@ -15,12 +15,19 @@ export class ProjectionsService {
     return this.projectionsRepository.findOne({ projectionId });
   }
 
-  async create(createProjectionDto: CreateProjectionDto): Promise<Projection> {
-    return this.projectionsRepository.create(createProjectionDto);
+  async create(
+    listOfProjections: CreateProjectionDto[],
+  ): Promise<Projection[]> {
+    let arr = [];
+    for (let singleProjection of listOfProjections) {
+      arr.push(await this.projectionsRepository.create(singleProjection));
+    }
+    return arr;
   }
 
   update(projectionId: number, updateProjectionDto: UpdateProjectionDto) {
     return this.projectionsRepository.findOneAndUpdate(
+      // projectionId: projectionId
       { projectionId },
       updateProjectionDto,
     );
