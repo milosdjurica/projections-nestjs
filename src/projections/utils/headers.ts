@@ -1,5 +1,5 @@
 export const headers: string[] = [
-  'id',
+  'idProjection',
   'lastName',
   'firstName',
   'value',

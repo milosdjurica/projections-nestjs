@@ -12,6 +12,7 @@ import {
   UploadedFile,
   ParseFilePipe,
   FileTypeValidator,
+  ParseArrayPipe,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage, memoryStorage } from 'multer';
@@ -19,7 +20,6 @@ import { CreateProjectionDto, UpdateProjectionDto } from '../dto';
 import { ChangeFileInterceptor } from '../interceptors/changefile.interceptor';
 import { ProjectionsService } from '../services/projections.service';
 import { editFileName, fileHelper } from '../interceptors/filehelper';
-import { request } from 'http';
 
 @Controller('projections')
 export class ProjectionsController {
@@ -50,7 +50,8 @@ export class ProjectionsController {
   )
   async create(
     @Req() request,
-    @Body() listOfProjections: CreateProjectionDto[],
+    @Body(new ParseArrayPipe({ items: CreateProjectionDto }))
+    listOfProjections: CreateProjectionDto[],
     @UploadedFile(
       new ParseFilePipe({
         validators: [new FileTypeValidator({ fileType: 'text/csv' })],
@@ -58,16 +59,16 @@ export class ProjectionsController {
     )
     file: Express.Multer.File,
   ) {
-    // console.log(request.body);
     for (let singleProjection of listOfProjections) {
-      // console.log(singleProjection);
-      let createdProjection = await this.projectionsService.create(
-        singleProjection,
-      );
-      if (!createdProjection)
-        return 'There was an error, some projections were not added';
+      request.body = singleProjection;
+      this.createSingleProjection(singleProjection);
     }
     return `Succesfully created all projections!`;
+  }
+
+  @Post('createSingleProjection')
+  createSingleProjection(@Body() createProjectionDto: CreateProjectionDto) {
+    return this.projectionsService.create(createProjectionDto);
   }
 
   @Patch(':projectionId')

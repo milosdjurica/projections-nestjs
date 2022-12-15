@@ -6,7 +6,7 @@ export type ProjectionDocument = HydratedDocument<Projection>;
 @Schema({ timestamps: true })
 export class Projection {
   @Prop()
-  id?: string;
+  idProjection?: string;
 
   @Prop()
   lastName?: string;

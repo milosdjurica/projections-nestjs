@@ -22,7 +22,7 @@ export class ChangeFileInterceptor implements NestInterceptor {
     const fileContent = await fs.readFile(filepath, 'utf-8');
 
     let arrayOfProjections = fileContent.split('\n');
-    let arr = [];
+    let reqBody = [];
 
     for (let i = 1; i < arrayOfProjections.length; i++) {
       if (arrayOfProjections[i].length === 0) continue;
@@ -31,7 +31,7 @@ export class ChangeFileInterceptor implements NestInterceptor {
       let oneProjection: CreateProjectionDto = new CreateProjectionDto();
 
       for (let j = 0; j < dataArray.length; j++) {
-        if (headers[j] === 'id') {
+        if (headers[j] === 'idProjection') {
           oneProjection[headers[j]] = dataArray[j];
         } else if (headers[j] === 'lastName') {
           oneProjection[headers[j]] = dataArray[j];
@@ -45,17 +45,18 @@ export class ChangeFileInterceptor implements NestInterceptor {
           oneProjection[headers[j]] = dataArray[j];
         } else if (headers[j] === 'injury') {
           oneProjection[headers[j]] = dataArray[j];
-        } else {
-          oneProjection[headers[j]] = Number(dataArray[j]);
+        } else if (dataArray[j] == '0.00' || dataArray[j] == '0.000') {
+          oneProjection[headers[j]] = 0;
+        } else if (parseFloat(dataArray[j])) {
+          oneProjection[headers[j]] = parseFloat(dataArray[j]);
         }
       }
 
       oneProjection['pointsScored'] = 0;
       oneProjection['granica'] = 0;
-
-      arr.push(oneProjection);
+      reqBody.push(oneProjection);
     }
-    request.body = arr;
+    request.body = reqBody;
     return next.handle();
   }
 }
