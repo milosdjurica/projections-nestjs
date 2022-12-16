@@ -1,5 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { RegisterDto } from '../dto';
+import { LoginDto, RegisterDto } from '../dto';
 import { AuthService } from '../services/auth.service';
 import { Tokens } from '../types';
 
@@ -13,17 +13,17 @@ export class AuthController {
   }
 
   @Post('local/login')
-  loginLocal() {
-    this.authService.loginLocal();
+  async loginLocal(@Body() loginDto: LoginDto) {
+    return this.authService.loginLocal(loginDto);
   }
 
   @Post('local/logout')
   logout() {
-    this.authService.logout();
+    return this.authService.logout();
   }
 
   @Post('local/refresh')
   refreshtokens() {
-    this.authService.refreshTokens();
+    return this.authService.refreshTokens();
   }
 }

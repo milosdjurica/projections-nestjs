@@ -1,26 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model } from 'mongoose';
-import { User, UserDocument } from '../schemas/user.schema';
+import { FilterQuery } from 'mongoose';
+import { User } from '../schemas/user.schema';
+import { UsersRepository } from '../users.repository';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    @InjectModel(User.name)
-    private userModel: Model<UserDocument>,
-  ) {}
+  constructor(private readonly usersRepository: UsersRepository) {}
 
   async createUser(user: User): Promise<User> {
-    const newUser = new this.userModel(user);
-    return newUser.save();
+    return this.usersRepository.create(user);
+  }
+
+  async findOne(username: string) {
+    return this.usersRepository.findOne({ username });
+  }
+
+  findAll() {
+    return this.usersRepository.find({});
   }
 
   async findOneAndUpdate(
     userFilterQuery: FilterQuery<User>,
     user: Partial<User>,
   ): Promise<User> {
-    return this.userModel.findOneAndUpdate(userFilterQuery, user, {
-      new: true,
-    });
+    return this.usersRepository.findOneAndUpdate(userFilterQuery, user);
   }
 }
