@@ -10,7 +10,9 @@ export abstract class EntityRepository<T extends Document> {
     projection?: Record<string, unknown>,
   ): Promise<T[] | null> {
     return this.entityModel.find(entityFilterQuery, {
-      _id: 0,
+      // _id: 0,
+      // __v: 0,
+      // hash: 0,
       ...projection,
     });
   }
@@ -21,7 +23,8 @@ export abstract class EntityRepository<T extends Document> {
   ): Promise<T | null> {
     return this.entityModel
       .findOne(entityFilterQuery, {
-        _id: 0,
+        // _id: 0,
+        // __v: 0,
         ...projection,
       })
       .exec();
@@ -36,12 +39,15 @@ export abstract class EntityRepository<T extends Document> {
     entityFilterQuery: FilterQuery<T>,
     updateEntityData: UpdateQuery<unknown>,
   ): Promise<T | null> {
-    // check if this applies projection (if returns ID and username)
     return this.entityModel.findOneAndUpdate(
       entityFilterQuery,
       updateEntityData,
       {
         new: true,
+        projection: {
+          // __v: 0,
+          // hash: 0,
+        },
       },
     );
   }

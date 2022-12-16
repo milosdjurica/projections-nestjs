@@ -1,5 +1,4 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
 
 // export type UserDocument = HydratedDocument<User>;
 export type UserDocument = User & Document;
@@ -11,10 +10,10 @@ export class User {
   @Prop()
   hash: string;
 
-  @Prop()
-  hashedRt?: string;
+  @Prop({default: null})
+  hashedRt: string;
 
-  @Prop()
+  @Prop({default: 'basic user'})
   role?: string;
 }
 

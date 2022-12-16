@@ -1,5 +1,4 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
 
 // had to change this in order for abstractRepository to work
 // export type ProjectionDocument = HydratedDocument<Projection>;

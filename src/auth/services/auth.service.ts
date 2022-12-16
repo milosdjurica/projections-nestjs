@@ -5,6 +5,7 @@ import { Tokens } from '../types';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@Src/users/schemas/user.schema';
 import { UsersRepository } from '@Src/users/users.repository';
+import { ObjectId } from 'mongoose';
 
 @Injectable()
 export class AuthService {
@@ -20,15 +21,8 @@ export class AuthService {
       ...registerDto,
     });
 
-    // just getting user that is created, but without hash
-    // because i dont want to put hash(password) into jwt
-    const foundUser = await this.userRepository.findOne(
-      { username: newUser.username },
-      { hash: 0 },
-    );
-
-    const tokens = await this.getTokens(foundUser);
-    await this.updateRefreshTokenHash(foundUser.username, tokens.refresh_token);
+    const tokens = await this.getTokens(newUser);
+    await this.updateRefreshTokenHash(newUser.username, tokens.refresh_token);
     return tokens;
   }
 
@@ -40,15 +34,40 @@ export class AuthService {
     const passwordMatches = await bcrypt.compare(loginDto.password, user.hash);
     if (!passwordMatches) throw new ForbiddenException('Access denied');
 
-    const userWIthoutHash = await this.userRepository.findOne(
-      { username },
-      { hash: 0, hashedRt: 0 },
+    const tokens = await this.getTokens(user);
+    await this.updateRefreshTokenHash(user.username, tokens.refresh_token);
+    return tokens;
+  }
+
+  async logout(userId: ObjectId) {
+    return this.userRepository.findOneAndUpdate(
+      {
+        _id: userId,
+        // checks if hashedRt is null
+        hashedRt: { $ne: null },
+      },
+      {
+        hashedRt: null,
+      },
     );
-    const tokens = await this.getTokens(userWIthoutHash);
-    await this.updateRefreshTokenHash(
-      userWIthoutHash.username,
-      tokens.refresh_token,
-    );
+  }
+
+  async refreshTokens(userId: ObjectId, rt: string) {
+    const user = await this.userRepository.findOne({
+      sub: userId,
+    });
+    console.log(user.hashedRt)
+    console.log('\n\n\n')
+    console.log(userId);
+    console.log(rt);
+    if (!user) throw new ForbiddenException('Access denied');
+
+    // fix this compare function it is not working
+    const rtMatches = await bcrypt.compare(rt, user.hashedRt);
+    if (!rtMatches) throw new ForbiddenException('Access denied');
+
+    const tokens = await this.getTokens(user);
+    await this.updateRefreshTokenHash(user.username, tokens.refresh_token);
     return tokens;
   }
 
@@ -60,21 +79,17 @@ export class AuthService {
     );
   }
 
-  logout(): void {}
-  refreshTokens() {}
-
   hashData(data: string) {
     return bcrypt.hash(data, 10);
   }
 
-  async getTokens(user: User): Promise<Tokens> {
-    console.log('LOGGING USER ID IN GET TOKENS IN AUTH SERVICE');
-    console.log(user);
-
+  async getTokens(user: Partial<User>): Promise<Tokens> {
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(
         {
-          user,
+          sub: user['_id'],
+          username: user.username,
+          role: user.role,
         },
         {
           secret: process.env.JWT_AUTH_SECRET,
@@ -83,7 +98,9 @@ export class AuthService {
       ),
       this.jwtService.signAsync(
         {
-          user,
+          sub: user['_id'],
+          username: user.username,
+          role: user.role,
         },
         {
           secret: process.env.JWT_REFRESH_SECRET,
