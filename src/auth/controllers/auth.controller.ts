@@ -6,10 +6,10 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
+import { GetCurrentUser, GetCurrentUserId, Public } from '@Src/common/decorators';
+import { RtGuard } from '@Src/common/guards';
 import { ObjectId } from 'mongoose';
-import { GetCurrentUser, GetCurrentUserId, Public } from '../decorators';
 import { LoginDto, RegisterDto } from '../dto';
-import { RtGuard } from '../guards';
 import { AuthService } from '../services/auth.service';
 import { Tokens } from '../types';
 
@@ -37,6 +37,7 @@ export class AuthController {
     return this.authService.logout(userId);
   }
 
+  // dont need AtGuard so its overriden with Public(), need only RtGuard
   @Public()
   @UseGuards(RtGuard)
   @Post('local/refresh')

@@ -18,6 +18,7 @@ export class AtGuard extends AuthGuard('jwt') {
       context.getClass(),
     ]);
 
+    // if method is public, then we can access it
     if(isPublic) return true
     return super.canActivate(context);
   }

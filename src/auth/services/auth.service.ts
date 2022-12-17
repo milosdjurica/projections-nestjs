@@ -56,15 +56,13 @@ export class AuthService {
     const user = await this.userRepository.findOne({
       sub: userId,
     });
-    console.log(user.hashedRt)
-    console.log('\n\n\n')
-    console.log(userId);
-    console.log(rt);
-    if (!user) throw new ForbiddenException('Access denied');
 
-    // fix this compare function it is not working
+    // if i am logged out user.hashedRt will be null
+    if (!user || user.hashedRt)
+      throw new ForbiddenException('Access denied');
+
     const rtMatches = await bcrypt.compare(rt, user.hashedRt);
-    if (!rtMatches) throw new ForbiddenException('Access denied');
+    if (!rtMatches) throw new ForbiddenException('Token is not valid');
 
     const tokens = await this.getTokens(user);
     await this.updateRefreshTokenHash(user.username, tokens.refresh_token);
