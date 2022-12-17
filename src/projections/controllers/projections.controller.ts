@@ -9,12 +9,14 @@ import {
   ParseIntPipe,
   UseInterceptors,
   ParseArrayPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ProjectionsService } from '../services';
 import { CreateProjectionDto, UpdateProjectionDto } from '../dto';
 import { ChangeFileInterceptor } from '@Src/common/interceptors';
 import { checkFileType, fileLimits } from '@Src/common/utils';
+import { AdminGuard } from '@Src/common/guards';
 
 @Controller('projections')
 export class ProjectionsController {
@@ -30,6 +32,7 @@ export class ProjectionsController {
     return this.projectionsService.findOne(projectionId);
   }
 
+  @UseGuards(AdminGuard)
   @Post()
   @UseInterceptors(
     FileInterceptor('file', {
@@ -45,6 +48,7 @@ export class ProjectionsController {
     return this.projectionsService.create(listOfProjections);
   }
 
+  @UseGuards(AdminGuard)
   @Patch('/:projectionId')
   update(
     @Param('projectionId', ParseIntPipe) projectionId: number,
@@ -53,11 +57,13 @@ export class ProjectionsController {
     return this.projectionsService.update(projectionId, updateProjectionDto);
   }
 
+  @UseGuards(AdminGuard)
   @Delete(':projectionId')
   deleteById(@Param('projectionId', ParseIntPipe) projectionId: number) {
     return this.projectionsService.deleteById(projectionId);
   }
 
+  @UseGuards(AdminGuard)
   @Delete()
   deleteMany() {
     return this.projectionsService.deleteMany();

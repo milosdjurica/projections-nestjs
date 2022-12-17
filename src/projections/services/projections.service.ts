@@ -15,10 +15,8 @@ export class ProjectionsService {
     return this.projectionsRepository.findOne({ projectionId });
   }
 
-  async create(
-    listOfProjections: CreateProjectionDto[],
-  ): Promise<Projection[]> {
-    return await Promise.all(
+  create(listOfProjections: CreateProjectionDto[]): Promise<Projection[]> {
+    return Promise.all(
       listOfProjections.map((singleProjection) =>
         this.projectionsRepository.create(singleProjection),
       ),
