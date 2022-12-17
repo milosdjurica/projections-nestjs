@@ -1,11 +1,11 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { LoginDto, RegisterDto } from '../dto';
-import * as bcrypt from 'bcrypt';
-import { Tokens } from '../types';
 import { JwtService } from '@nestjs/jwt';
+import { ObjectId } from 'mongoose';
+import * as bcrypt from 'bcrypt';
+import { LoginDto, RegisterDto } from '../dto';
+import { Tokens } from '../types';
 import { User } from '@Src/users/schemas/user.schema';
 import { UsersRepository } from '@Src/users/users.repository';
-import { ObjectId } from 'mongoose';
 
 @Injectable()
 export class AuthService {
@@ -15,6 +15,7 @@ export class AuthService {
   ) {}
 
   async registerLocal(registerDto: RegisterDto): Promise<Tokens> {
+    delete registerDto.confirmPassword;
     const hash = await this.hashData(registerDto.password);
     const newUser = await this.userRepository.create({
       hash,
@@ -58,8 +59,7 @@ export class AuthService {
     });
 
     // if i am logged out user.hashedRt will be null
-    if (!user || user.hashedRt)
-      throw new ForbiddenException('Access denied');
+    if (!user || user.hashedRt) throw new ForbiddenException('Access denied');
 
     const rtMatches = await bcrypt.compare(rt, user.hashedRt);
     if (!rtMatches) throw new ForbiddenException('Token is not valid');
@@ -87,7 +87,7 @@ export class AuthService {
         {
           sub: user['_id'],
           username: user.username,
-          role: user.role,
+          isAdmin: user.isAdmin,
         },
         {
           secret: process.env.JWT_AUTH_SECRET,
@@ -98,7 +98,7 @@ export class AuthService {
         {
           sub: user['_id'],
           username: user.username,
-          role: user.role,
+          isAdmin: user.isAdmin,
         },
         {
           secret: process.env.JWT_REFRESH_SECRET,

@@ -10,11 +10,11 @@ export class User {
   @Prop()
   hash: string;
 
-  @Prop({default: null})
+  @Prop({ default: null })
   hashedRt: string;
 
-  @Prop({default: 'basic user'})
-  role?: string;
+  @Prop({ default: false })
+  isAdmin: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

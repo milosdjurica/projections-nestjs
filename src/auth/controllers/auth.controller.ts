@@ -5,20 +5,28 @@ import {
   HttpStatus,
   Post,
   UseGuards,
+  UsePipes,
 } from '@nestjs/common';
-import { GetCurrentUser, GetCurrentUserId, Public } from '@Src/common/decorators';
-import { RtGuard } from '@Src/common/guards';
 import { ObjectId } from 'mongoose';
 import { LoginDto, RegisterDto } from '../dto';
 import { AuthService } from '../services/auth.service';
 import { Tokens } from '../types';
+import {
+  GetCurrentUser,
+  GetCurrentUserId,
+  Public,
+} from '@Src/common/decorators';
+import { AdminGuard, RtGuard } from '@Src/common/guards';
+import { PasswordValidationPipe } from '@Src/common/pipes';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @UseGuards(AdminGuard)
   @Post('local/register')
   @HttpCode(HttpStatus.CREATED)
+  @UsePipes(new PasswordValidationPipe())
   registerLocal(@Body() registerDto: RegisterDto): Promise<Tokens> {
     return this.authService.registerLocal(registerDto);
   }

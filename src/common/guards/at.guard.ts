@@ -1,5 +1,4 @@
-import { Injectable } from '@nestjs/common';
-import { ExecutionContext } from '@nestjs/common/interfaces';
+import { ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 
