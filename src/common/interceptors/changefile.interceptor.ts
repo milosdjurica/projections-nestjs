@@ -4,9 +4,9 @@ import {
   ExecutionContext,
   CallHandler,
 } from '@nestjs/common';
+import { CreateProjectionDto } from '@Src/projections/dto';
 import { Observable } from 'rxjs';
-import { CreateProjectionDto } from '../dto';
-import { headers } from '../utils/headers';
+import { headers } from '../utils';
 
 @Injectable()
 export class ChangeFileInterceptor implements NestInterceptor {
@@ -15,19 +15,14 @@ export class ChangeFileInterceptor implements NestInterceptor {
     next: CallHandler,
   ): Promise<Observable<any>> {
     const request = context.switchToHttp().getRequest();
-    const arrayOfProjections = this.getArrayOfProjections(request);
-    const reqBody = this.handleReqBody(arrayOfProjections);
 
-    request.body = reqBody;
+    request.body = this.handleReqBody(request);
     return next.handle();
   }
 
-  getArrayOfProjections(request): string[] {
-    const fileContent = request.file.buffer.toString();
-    return fileContent.split('\n');
-  }
+  handleReqBody(request): CreateProjectionDto[] {
+    const arrayOfProjections = this.getArrayOfProjections(request);
 
-  handleReqBody(arrayOfProjections): CreateProjectionDto[] {
     let reqBody = [];
     for (let i = 1; i < arrayOfProjections.length; i++) {
       if (arrayOfProjections[i].length === 0) continue;
@@ -39,6 +34,11 @@ export class ChangeFileInterceptor implements NestInterceptor {
       reqBody.push(oneProjection);
     }
     return reqBody;
+  }
+
+  getArrayOfProjections(request): string[] {
+    const fileContent = request.file.buffer.toString();
+    return fileContent.split('\n');
   }
 
   handleProjectionData(dataArray): CreateProjectionDto {

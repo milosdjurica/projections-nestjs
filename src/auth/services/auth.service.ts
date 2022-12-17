@@ -1,11 +1,16 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ObjectId } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { LoginDto, RegisterDto } from '../dto';
 import { Tokens } from '../types';
-import { User } from '@Src/users/schemas/user.schema';
 import { UsersRepository } from '@Src/users/users.repository';
+import { User } from '@Src/database/schemas';
 
 @Injectable()
 export class AuthService {
@@ -15,6 +20,16 @@ export class AuthService {
   ) {}
 
   async registerLocal(registerDto: RegisterDto): Promise<Tokens> {
+    const usernameTaken = await this.userRepository.findOne({
+      username: registerDto.username,
+    });
+
+    if (usernameTaken)
+      throw new HttpException(
+        'Username is already taken! Please provide another one.',
+        HttpStatus.BAD_REQUEST,
+      );
+
     delete registerDto.confirmPassword;
     const hash = await this.hashData(registerDto.password);
     const newUser = await this.userRepository.create({
@@ -59,6 +74,7 @@ export class AuthService {
     });
 
     // if i am logged out user.hashedRt will be null
+    // need this so program dont break on bcrypt.compare
     if (!user || user.hashedRt) throw new ForbiddenException('Access denied');
 
     const rtMatches = await bcrypt.compare(rt, user.hashedRt);

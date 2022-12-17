@@ -8,15 +8,13 @@ import {
   Param,
   ParseIntPipe,
   UseInterceptors,
-  UploadedFile,
-  ParseFilePipe,
-  FileTypeValidator,
   ParseArrayPipe,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ProjectionsService } from '../services';
 import { CreateProjectionDto, UpdateProjectionDto } from '../dto';
-import { ChangeFileInterceptor } from '../interceptors/changefile.interceptor';
-import { ProjectionsService } from '../services/projections.service';
+import { ChangeFileInterceptor } from '@Src/common/interceptors';
+import { checkFileType, fileLimits } from '@Src/common/utils';
 
 @Controller('projections')
 export class ProjectionsController {
@@ -33,16 +31,16 @@ export class ProjectionsController {
   }
 
   @Post()
-  @UseInterceptors(FileInterceptor('file'), ChangeFileInterceptor)
-  async create(
+  @UseInterceptors(
+    FileInterceptor('file', {
+      limits: fileLimits,
+      fileFilter: checkFileType,
+    }),
+    ChangeFileInterceptor,
+  )
+  create(
     @Body(new ParseArrayPipe({ items: CreateProjectionDto }))
     listOfProjections: CreateProjectionDto[],
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [new FileTypeValidator({ fileType: 'text/csv' })],
-      }),
-    )
-    file: Express.Multer.File,
   ) {
     return this.projectionsService.create(listOfProjections);
   }

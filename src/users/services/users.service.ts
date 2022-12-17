@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { User } from '@Src/database/schemas';
 import { FilterQuery } from 'mongoose';
-import { User } from '../schemas/user.schema';
 import { UsersRepository } from '../users.repository';
 
 @Injectable()

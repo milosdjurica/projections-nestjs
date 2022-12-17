@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Projection, ProjectionSchema } from './schemas/projection.schema';
 import { ProjectionsController } from './controllers/projections.controller';
+import { ProjectionsService } from './services';
 import { ProjectionsRepository } from './projections.repository';
-import { ProjectionsService } from './services/projections.service';
+import { Projection, ProjectionSchema } from '@Src/database/schemas';
 
 @Module({
   imports: [

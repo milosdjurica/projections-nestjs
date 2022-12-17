@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { Projection } from '@Src/database/schemas';
 import { CreateProjectionDto, UpdateProjectionDto } from '../dto';
 import { ProjectionsRepository } from '../projections.repository';
-import { Projection } from '../schemas/projection.schema';
 
 @Injectable()
 export class ProjectionsService {
@@ -18,16 +18,20 @@ export class ProjectionsService {
   async create(
     listOfProjections: CreateProjectionDto[],
   ): Promise<Projection[]> {
-    let arr = [];
-    for (let singleProjection of listOfProjections) {
-      arr.push(await this.projectionsRepository.create(singleProjection));
-    }
-    return arr;
+    return await Promise.all(
+      listOfProjections.map((singleProjection) =>
+        this.projectionsRepository.create(singleProjection),
+      ),
+    );
+    // let arr = []
+    // for (let singleProjection of listOfProjections) {
+    //   arr.push(await this.projectionsRepository.create(singleProjection));
+    // }
+    // return arr;
   }
 
   update(projectionId: number, updateProjectionDto: UpdateProjectionDto) {
     return this.projectionsRepository.findOneAndUpdate(
-      // projectionId: projectionId
       { projectionId },
       updateProjectionDto,
     );

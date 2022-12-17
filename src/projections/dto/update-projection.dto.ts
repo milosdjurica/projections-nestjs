@@ -1,6 +1,5 @@
 import { IsNumber, IsOptional, Max, Min } from 'class-validator';
 
-// export class UpdateProjectionDto extends PartialType(CreateProjectionDto) {}
 export class UpdateProjectionDto {
   @IsOptional()
   @IsNumber()
