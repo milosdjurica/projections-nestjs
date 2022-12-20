@@ -10,10 +10,15 @@ import {
   UseInterceptors,
   ParseArrayPipe,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ProjectionsService } from '../services';
-import { CreateProjectionDto, UpdateProjectionDto } from '../dto';
+import {
+  CreateProjectionDto,
+  QueryProjectionsDto,
+  UpdateProjectionDto,
+} from '../dto';
 import { ChangeFileInterceptor } from '@Src/common/interceptors';
 import { checkFileType, fileLimits } from '@Src/common/utils';
 import { AdminGuard } from '@Src/common/guards';
@@ -23,7 +28,10 @@ export class ProjectionsController {
   constructor(private readonly projectionsService: ProjectionsService) {}
 
   @Get()
-  findAll() {
+  findProjections(@Query() queryProjections: QueryProjectionsDto) {
+    if (queryProjections.lastName) {
+      return this.projectionsService.findByLastName(queryProjections.lastName);
+    }
     return this.projectionsService.findAll();
   }
 
