@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Projection } from '@Src/database/schemas';
-import { CreateProjectionDto, UpdateProjectionDto } from '../dto';
+import {
+  CreateProjectionDto,
+  QueryProjectionsDto,
+  UpdateProjectionDto,
+} from '../dto';
 import { ProjectionsRepository } from '../projections.repository';
 
 @Injectable()
@@ -11,8 +15,15 @@ export class ProjectionsService {
     return this.projectionsRepository.find({});
   }
 
-  findByLastName(lastName: string) {
-    return this.projectionsRepository.find({ lastName });
+  findByName(queryProjections: QueryProjectionsDto) {
+    const { lastName, firstName } = queryProjections;
+
+    if (lastName && firstName)
+      return this.projectionsRepository.find({ lastName, firstName });
+
+    if (lastName) return this.projectionsRepository.find({ lastName });
+    if (firstName) return this.projectionsRepository.find({ firstName });
+    return this.projectionsRepository.find({});
   }
 
   findOne(projectionId: number) {

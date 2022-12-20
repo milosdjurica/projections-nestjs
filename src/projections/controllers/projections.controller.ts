@@ -29,10 +29,7 @@ export class ProjectionsController {
 
   @Get()
   findProjections(@Query() queryProjections: QueryProjectionsDto) {
-    if (queryProjections.lastName) {
-      return this.projectionsService.findByLastName(queryProjections.lastName);
-    }
-    return this.projectionsService.findAll();
+    return this.projectionsService.findByName(queryProjections);
   }
 
   @Get(':projectionId')
