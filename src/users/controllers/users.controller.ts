@@ -8,11 +8,14 @@ import {
   UseGuards,
   UsePipes,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AdminGuard } from '@Src/common/guards';
 import { PasswordValidationPipe } from '@Src/common/pipes';
 import { UpdateUserDto } from '../dto';
 import { UsersService } from '../services';
 
+@ApiBearerAuth()
+@ApiTags('Admins')
 @UseGuards(AdminGuard)
 @Controller('users')
 export class UsersController {

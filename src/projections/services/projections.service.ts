@@ -18,6 +18,9 @@ export class ProjectionsService {
   findByName(queryProjections: QueryProjectionsDto) {
     const { lastName, firstName } = queryProjections;
 
+    // could change this to find all projections first
+    // and filter them after by lastname and firstname 
+    // but i think this is more efficient
     if (lastName && firstName)
       return this.projectionsRepository.find({ lastName, firstName });
 
@@ -34,6 +37,7 @@ export class ProjectionsService {
     listOfProjections: CreateProjectionDto[],
   ): Promise<Projection[]> {
     // !this way may not create projections in same order like in file
+    // !not sure if it is relevant right now, could change later
     // return Promise.all(
     //   listOfProjections.map((singleProjection) =>
     //     this.projectionsRepository.create(singleProjection),

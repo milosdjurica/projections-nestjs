@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { User } from '@Src/database/schemas';
 import { FilterQuery } from 'mongoose';
 import { UpdateUserDto } from '../dto';
@@ -21,6 +21,19 @@ export class UsersService {
     userFilterQuery: FilterQuery<User>,
     userDto: UpdateUserDto,
   ): Promise<User> {
+    // !fixed problem when changing username to already existing one
+    if (userDto.username) {
+      const usernameTaken = await this.usersRepository.findOne({
+        username: userDto.username,
+      });
+      if (usernameTaken)
+        throw new HttpException(
+          'Username is already taken! Please provide another one.',
+          HttpStatus.BAD_REQUEST,
+        );
+    }
+
+    // if password was not changed just update
     if (!userDto.password) {
       return this.usersRepository.findOneAndUpdate(userFilterQuery, {
         ...userDto,

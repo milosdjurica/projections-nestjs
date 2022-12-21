@@ -3,6 +3,7 @@ import {
   NestInterceptor,
   ExecutionContext,
   CallHandler,
+  BadRequestException,
 } from '@nestjs/common';
 import { CreateProjectionDto } from '@Src/projections/dto';
 import { Observable } from 'rxjs';
@@ -37,8 +38,12 @@ export class ChangeFileInterceptor implements NestInterceptor {
   }
 
   getArrayOfProjections(request): string[] {
-    const fileContent = request.file.buffer.toString();
-    return fileContent.split('\n');
+    try {
+      const fileContent = request.file.buffer.toString();
+      return fileContent.split('\n');
+    } catch (error) {
+      throw new BadRequestException('File is not provided!')
+    }
   }
 
   handleProjectionData(dataArray): CreateProjectionDto {

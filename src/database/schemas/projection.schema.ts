@@ -7,79 +7,79 @@ export type ProjectionDocument = Projection & Document;
 @Schema({ timestamps: true })
 export class Projection {
   @Prop()
-  projectionId?: number;
+  projectionId: number;
 
   @Prop()
-  lastName?: string;
+  lastName: string;
 
   @Prop()
-  firstName?: string;
+  firstName: string;
 
   @Prop()
-  value?: number;
+  value: number;
 
   @Prop()
-  team?: string;
+  team: string;
 
   @Prop()
-  position?: string;
+  position: string;
 
   @Prop()
-  opponent?: string;
+  opponent: string;
 
   @Prop()
-  minutes?: number;
+  minutes: number;
 
   @Prop()
-  points?: number;
+  points: number;
 
   @Prop()
-  threes?: number;
+  threes: number;
 
   @Prop()
-  rebounds?: number;
+  rebounds: number;
 
   @Prop()
-  assists?: number;
+  assists: number;
 
   @Prop()
-  steals?: number;
+  steals: number;
 
   @Prop()
-  blocks?: number;
+  blocks: number;
 
   @Prop()
-  turnovers?: number;
+  turnovers: number;
 
   @Prop()
-  twos?: number;
+  twos: number;
 
   @Prop()
-  freeThrows?: number;
+  freeThrows: number;
 
   @Prop()
-  freeThrowsMissed?: number;
+  freeThrowsMissed: number;
 
   @Prop()
-  fieldGoals?: number;
+  fieldGoals: number;
 
   @Prop()
-  fieldGoalsMissed?: number;
+  fieldGoalsMissed: number;
 
   @Prop()
-  doubleDoubles?: number;
+  doubleDoubles: number;
 
   @Prop()
-  tripleDoubles?: number;
+  tripleDoubles: number;
 
   @Prop()
-  injury?: string;
+  injury: string;
 
   @Prop()
-  pointsScored?: number;
+  pointsScored: number;
 
   @Prop()
-  granica?: number;
+  granica: number;
 }
 
 export const ProjectionSchema = SchemaFactory.createForClass(Projection);

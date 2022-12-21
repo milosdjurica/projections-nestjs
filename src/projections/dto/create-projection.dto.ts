@@ -10,6 +10,10 @@ import {
 } from 'class-validator';
 
 export class CreateProjectionDto {
+  // !Swagger doc doesnt recognise this as schema
+  // !because createProjection takes file and then parse it to this
+  // !if can change then add ApiProperty() to all
+
   @IsNotEmpty()
   @Min(1000)
   @Max(9999)
