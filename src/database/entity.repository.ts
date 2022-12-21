@@ -11,7 +11,7 @@ export abstract class EntityRepository<T extends Document> {
   ): Promise<T[] | null> {
     return this.entityModel.find(entityFilterQuery, {
       // _id: 0,
-      // __v: 0,
+      __v: 0,
       // hash: 0,
       ...projection,
     });
@@ -24,7 +24,7 @@ export abstract class EntityRepository<T extends Document> {
     return this.entityModel
       .findOne(entityFilterQuery, {
         // _id: 0,
-        // __v: 0,
+        __v: 0,
         ...projection,
       })
       .exec();
@@ -38,6 +38,7 @@ export abstract class EntityRepository<T extends Document> {
   async findOneAndUpdate(
     entityFilterQuery: FilterQuery<T>,
     updateEntityData: UpdateQuery<unknown>,
+    projection?: Record<string, unknown>,
   ): Promise<T | null> {
     return this.entityModel.findOneAndUpdate(
       entityFilterQuery,
@@ -45,15 +46,24 @@ export abstract class EntityRepository<T extends Document> {
       {
         new: true,
         projection: {
-          // __v: 0,
+          __v: 0,
           // hash: 0,
+          ...projection,
         },
       },
     );
   }
 
-  async delete(entityFilterQuery: FilterQuery<T>): Promise<T> {
-    return this.entityModel.findOneAndDelete(entityFilterQuery);
+  async delete(
+    entityFilterQuery: FilterQuery<T>,
+    projection?: Record<string, unknown>,
+  ): Promise<T> {
+    return this.entityModel.findOneAndDelete(entityFilterQuery, {
+      projection: {
+        __v: 0,
+        ...projection,
+      },
+    });
   }
 
   async deleteMany(entityFilterQuery: FilterQuery<T>): Promise<boolean> {

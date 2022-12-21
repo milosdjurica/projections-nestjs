@@ -10,8 +10,9 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AdminGuard } from '@Src/common/guards';
-import { PasswordValidationPipe } from '@Src/common/pipes';
+import { ObjectIdPipe, PasswordValidationPipe } from '@Src/common/pipes';
 import { UserOperations } from '@Src/common/swagger';
+import { ObjectId } from 'mongoose';
 import { UpdateUserDto } from '../dto';
 import { UsersService } from '../services';
 
@@ -29,24 +30,24 @@ export class UsersController {
   }
 
   @ApiOperation(UserOperations.getSingle)
-  @Get(':username')
-  getOneUser(@Param('username') username: string) {
-    return this.userService.findOne({ username });
+  @Get(':id')
+  getUserById(@Param('id', ObjectIdPipe) userId: ObjectId) {
+    return this.userService.findOne({ _id: userId });
   }
 
   @ApiOperation(UserOperations.update)
-  @Patch(':username')
+  @Patch(':id')
   @UsePipes(new PasswordValidationPipe())
-  updateUserByUsername(
-    @Param('username') username: string,
+  updateUserByid(
+    @Param('id', ObjectIdPipe) userId: ObjectId,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return this.userService.findOneAndUpdate({ username }, updateUserDto);
+    return this.userService.findOneAndUpdate({ _id: userId }, updateUserDto);
   }
 
   @ApiOperation(UserOperations.deleteSingle)
-  @Delete(':username')
-  deleteUser(@Param('username') username: string) {
-    return this.userService.deleteUserByUsername(username);
+  @Delete(':id')
+  deleteUser(@Param('id', ObjectIdPipe) userId: ObjectId) {
+    return this.userService.deleteUserById({ _id: userId });
   }
 }

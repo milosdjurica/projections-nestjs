@@ -40,7 +40,7 @@ export class AuthController {
   @Public()
   @Post('local/login')
   @HttpCode(HttpStatus.OK)
-  async loginLocal(@Body() loginDto: LoginDto) {
+  async loginLocal(@Body() loginDto: LoginDto): Promise<Tokens> {
     return this.authService.loginLocal(loginDto);
   }
 

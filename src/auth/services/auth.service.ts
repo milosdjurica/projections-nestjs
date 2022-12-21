@@ -56,7 +56,7 @@ export class AuthService {
   }
 
   async logout(userId: ObjectId) {
-    return this.userRepository.findOneAndUpdate(
+    const user = await this.userRepository.findOneAndUpdate(
       {
         _id: userId,
         // checks if hashedRt is null
@@ -65,7 +65,20 @@ export class AuthService {
       {
         hashedRt: null,
       },
+      { hash: 0, __v: 0 },
     );
+
+    if (!user)
+      return {
+        success: false,
+        msg: 'Something went wrong! User id is not valid or user is already logged out!',
+      };
+
+    // !2nd option is to return user object that just logged out
+    return {
+      success: true,
+      msg: `User ${user.username} is successfully logged out!`,
+    };
   }
 
   async refreshTokens(userId: ObjectId, rt: string) {
@@ -75,7 +88,10 @@ export class AuthService {
 
     // if i am logged out user.hashedRt will be null
     // need this so program dont break on bcrypt.compare
-    if (!user || user.hashedRt) throw new ForbiddenException('Access denied');
+    if (!user || !user.hashedRt)
+      throw new ForbiddenException(
+        'Access denied! Wrong user id or you are already logged out',
+      );
 
     const rtMatches = await bcrypt.compare(rt, user.hashedRt);
     if (!rtMatches) throw new ForbiddenException('Token is not valid');
