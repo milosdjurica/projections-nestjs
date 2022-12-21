@@ -22,8 +22,19 @@ import {
 import { ChangeFileInterceptor } from '@Src/common/interceptors';
 import { checkFileType, fileLimits } from '@Src/common/utils';
 import { AdminGuard } from '@Src/common/guards';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Projection } from '@Src/database/schemas';
+import {
+  ProjectionsOperations,
+  ProjectionsResponses,
+} from '@Src/common/swagger';
 
 @ApiBearerAuth()
 @ApiTags('Projections')
@@ -31,6 +42,8 @@ import { Projection } from '@Src/database/schemas';
 export class ProjectionsController {
   constructor(private readonly projectionsService: ProjectionsService) {}
 
+  @ApiOperation(ProjectionsOperations.get)
+  @ApiResponse({ ...ProjectionsResponses.get, type: [Projection] })
   @Get()
   findProjections(
     @Query() queryProjections: QueryProjectionsDto,
@@ -38,6 +51,8 @@ export class ProjectionsController {
     return this.projectionsService.findByName(queryProjections);
   }
 
+  @ApiOperation(ProjectionsOperations.getSingle)
+  @ApiResponse(ProjectionsResponses.getSingle)
   @Get(':projectionId')
   findOne(
     @Param('projectionId', ParseIntPipe) projectionId: number,
@@ -45,6 +60,8 @@ export class ProjectionsController {
     return this.projectionsService.findOne(projectionId);
   }
 
+  @ApiOperation(ProjectionsOperations.create)
+  @ApiResponse({ ...ProjectionsResponses.create, type: [Projection] })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -74,6 +91,8 @@ export class ProjectionsController {
     return this.projectionsService.create(listOfProjections);
   }
 
+  @ApiOperation(ProjectionsOperations.update)
+  @ApiResponse(ProjectionsResponses.update)
   @UseGuards(AdminGuard)
   @Patch('/:projectionId')
   update(
@@ -83,6 +102,8 @@ export class ProjectionsController {
     return this.projectionsService.update(projectionId, updateProjectionDto);
   }
 
+  @ApiOperation(ProjectionsOperations.deleteSingle)
+  @ApiResponse(ProjectionsResponses.deleteSinge)
   @UseGuards(AdminGuard)
   @Delete(':projectionId')
   deleteById(
@@ -91,6 +112,8 @@ export class ProjectionsController {
     return this.projectionsService.deleteById(projectionId);
   }
 
+  @ApiOperation(ProjectionsOperations.delete)
+  @ApiResponse(ProjectionsResponses.delete)
   @UseGuards(AdminGuard)
   @Delete()
   deleteMany(): Promise<boolean> {
