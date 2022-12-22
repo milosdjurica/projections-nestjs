@@ -4,7 +4,7 @@ export const UserOperations = {
     description: 'Only admin is allowed to do this',
   },
   getSingle: {
-    summary: 'Get user by id/username',
+    summary: 'Get user by ID',
     description: 'Only admin is allowed to do this',
   },
   update: {
@@ -13,7 +13,7 @@ export const UserOperations = {
       'Can change : username, password (requires to confirm it), isAdmin field. This action can be performed only by admin',
   },
   deleteSingle: {
-    summary: 'Delete user by id/username',
+    summary: 'Delete user by ID',
     description: 'Only admin is allowed to do this',
   },
 };

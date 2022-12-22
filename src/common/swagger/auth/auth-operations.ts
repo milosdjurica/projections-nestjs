@@ -4,7 +4,7 @@ export const AuthOperations = {
     description: 'Only admin is allowed to register new user',
   },
   login: {
-    summary: 'Login to get JWT token',
+    summary: 'Login to get JWT and Refresh token',
     description:
       'JWT token dont allow user to use all routes, because some of them are only allowed to admin',
   },

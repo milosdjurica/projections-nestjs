@@ -36,7 +36,7 @@ import {
   ProjectionsResponses,
 } from '@Src/common/swagger';
 
-@ApiBearerAuth()
+@ApiBearerAuth('JWT')
 @ApiTags('Projections')
 @Controller('projections')
 export class ProjectionsController {

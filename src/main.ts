@@ -11,14 +11,28 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Projections API')
     .setVersion('1.0')
-    .addBearerAuth({
-      type: 'http',
-      scheme: 'bearer',
-      bearerFormat: 'JWT',
-      name: 'jwt',
-      description: 'Enter JWT token',
-      in: 'header',
-    })
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'jwt',
+        description: 'Enter JWT token',
+        in: 'header',
+      },
+      'JWT',
+    )
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'refreshToken',
+        description: 'Enter Refresh token',
+        in: 'header',
+      },
+      'RefreshToken',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

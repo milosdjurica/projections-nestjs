@@ -4,7 +4,7 @@ export const ProjectionsOperations = {
     description: 'Returns array of json formated projections',
   },
   getSingle: {
-    summary: 'Get specific projection',
+    summary: 'Get specific projection by passing projection ID',
     description: 'Returns projection in json form',
   },
   create: {
@@ -14,7 +14,7 @@ export const ProjectionsOperations = {
   update: {
     summary: 'Update projection route',
     description:
-      'Only admin is allowed to do this. This is used to change field granica and totalPoints',
+      'Only admin is allowed to do this. This method change field granica and totalPoints',
   },
   deleteSingle: {
     summary: 'Delete a single projection by id from database',

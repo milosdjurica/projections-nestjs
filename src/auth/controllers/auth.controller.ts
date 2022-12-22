@@ -26,7 +26,7 @@ import { AuthOperations } from '@Src/common/swagger';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @ApiBearerAuth()
+  @ApiBearerAuth('JWT')
   @ApiOperation(AuthOperations.register)
   @UseGuards(AdminGuard)
   @Post('local/register')
@@ -44,7 +44,7 @@ export class AuthController {
     return this.authService.loginLocal(loginDto);
   }
 
-  @ApiBearerAuth()
+  @ApiBearerAuth('JWT')
   @ApiOperation(AuthOperations.logout)
   @Post('local/logout')
   @HttpCode(HttpStatus.OK)
@@ -55,7 +55,7 @@ export class AuthController {
 
   // dont need AtGuard so its overriden with Public(), need only RtGuard
   // fix ApiBearerAuth to be refresh token a ne jwt
-  @ApiBearerAuth()
+  @ApiBearerAuth('RefreshToken')
   @ApiOperation(AuthOperations.refresh)
   @Public()
   @UseGuards(RtGuard)
