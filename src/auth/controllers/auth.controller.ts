@@ -19,15 +19,12 @@ import {
 import { AdminGuard, RtGuard } from '@Src/common/guards';
 import { PasswordValidationPipe } from '@Src/common/pipes';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { AuthOperations } from '@Src/common/swagger';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @ApiBearerAuth('JWT')
-  @ApiOperation(AuthOperations.register)
   @UseGuards(AdminGuard)
   @Post('local/register')
   @HttpCode(HttpStatus.CREATED)
@@ -36,7 +33,6 @@ export class AuthController {
     return this.authService.registerLocal(registerDto);
   }
 
-  @ApiOperation(AuthOperations.login)
   @Public()
   @Post('local/login')
   @HttpCode(HttpStatus.OK)
@@ -44,8 +40,6 @@ export class AuthController {
     return this.authService.loginLocal(loginDto);
   }
 
-  @ApiBearerAuth('JWT')
-  @ApiOperation(AuthOperations.logout)
   @Post('local/logout')
   @HttpCode(HttpStatus.OK)
   async logout(@GetCurrentUserId() userId: ObjectId) {
@@ -54,9 +48,6 @@ export class AuthController {
   }
 
   // dont need AtGuard so its overriden with Public(), need only RtGuard
-  // fix ApiBearerAuth to be refresh token a ne jwt
-  @ApiBearerAuth('RefreshToken')
-  @ApiOperation(AuthOperations.refresh)
   @Public()
   @UseGuards(RtGuard)
   @Post('local/refresh')
