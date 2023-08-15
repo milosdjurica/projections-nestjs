@@ -18,9 +18,7 @@ import {
 } from '@Src/common/decorators';
 import { AdminGuard, RtGuard } from '@Src/common/guards';
 import { PasswordValidationPipe } from '@Src/common/pipes';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
